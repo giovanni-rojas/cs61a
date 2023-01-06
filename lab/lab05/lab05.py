@@ -256,7 +256,7 @@ def coords(fn, seq, lower, upper):
     [[-2, 4], [1, 1], [3, 9]]
     """
     "*** YOUR CODE HERE ***"
-    return ______
+    return [[x] + [fn(x)] for x in seq if lower <= fn(x) <= upper]
 
 
 def riffle(deck):
@@ -269,8 +269,7 @@ def riffle(deck):
     [0, 10, 1, 11, 2, 12, 3, 13, 4, 14, 5, 15, 6, 16, 7, 17, 8, 18, 9, 19]
     """
     "*** YOUR CODE HERE ***"
-    return _______
-
+    return sum([[deck[i]] + [deck[len(deck) // 2 + i]] for i in range(len(deck)) if i < len(deck) // 2], [])
 
 def add_trees(t1, t2):
     """
@@ -308,6 +307,17 @@ def add_trees(t1, t2):
       5
     """
     "*** YOUR CODE HERE ***"
+    b1 = branches(t1)
+    b2 = branches(t2)
+    if len(b1) < len(b2):
+        for i in range(len(b2)-len(b1)):
+            b1.append(tree(0))
+    elif len(b1) > len(b2):
+        for i in range(len(b1)-len(b2)):
+            b2.append(tree(0))
+    node = label(t1) + label(t2)
+    return tree(node,[add_trees(a[0],a[1]) for a in zip(b1,b2)])
+
 
 
 def build_successors_table(tokens):
@@ -329,7 +339,10 @@ def build_successors_table(tokens):
     for word in tokens:
         if prev not in table:
             "*** YOUR CODE HERE ***"
-        "*** YOUR CODE HERE ***"
+            table[prev] = [word]
+            "*** YOUR CODE HERE ***"
+        else:
+            table[prev] += [word]
         prev = word
     return table
 
@@ -347,6 +360,8 @@ def construct_sent(word, table):
     result = ''
     while word not in ['.', '!', '?']:
         "*** YOUR CODE HERE ***"
+        result = result + ' ' + word
+        word = random.choice(table[word])
     return result.strip() + word
 
 def shakespeare_tokens(path='shakespeare.txt', url='http://composingprograms.com/shakespeare.txt'):
@@ -360,8 +375,8 @@ def shakespeare_tokens(path='shakespeare.txt', url='http://composingprograms.com
         return shakespeare.read().decode(encoding='ascii').split()
 
 # Uncomment the following two lines
-# tokens = shakespeare_tokens()
-# table = build_successors_table(tokens)
+tokens = shakespeare_tokens()
+table = build_successors_table(tokens)
 
 def random_sent():
     import random
