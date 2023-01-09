@@ -318,6 +318,22 @@ def add_trees(t1, t2):
     node = label(t1) + label(t2)
     return tree(node,[add_trees(a[0],a[1]) for a in zip(b1,b2)])
 
+    """Solution from Lecture:
+    
+    result_label = label(t1) + label(t2)
+    result_branches = []
+    i = 0
+    while i < min(len(branches(t1)), len(branches(t2))):
+        b1, b2 = branches(t1)[i], branches(t2)[i]
+        new_branch = add_trees(b1, b2)
+        result_branches = result_branches + [new_branch]
+        i = i + 1
+    result_branches = result_branches + branches(t1)[i:]
+    result_branches = result_branches + branches(t2)[i:]
+    return tree(result_label, result_branches)
+
+    """
+
 
 
 def build_successors_table(tokens):
