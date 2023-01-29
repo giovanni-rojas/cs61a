@@ -25,6 +25,18 @@ def choose(paragraphs, select, k):
             else:
                 count += 1
     return ''
+
+    # #Youtube solution
+    # validParagraphs = []
+    # for i in range(len(paragraphs)):
+    #     if select(paragraphs[i]):
+    #         validParagraphs += [paragraphs[i]]
+    # print("DEBUG: ", validParagraphs)
+    # if k < len(validParagraphs):
+    #     return validParagraphs[k]
+    # else:
+    #     return ''
+    
     # END PROBLEM 1
 
 
@@ -102,6 +114,18 @@ def autocorrect(user_word, valid_words, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    #1. Handle special scenarios
+    if user_word in valid_words:
+        return user_word
+    #2. Find element of valid_words that has smallest difference
+        #a. Use the min function here
+        #b. Call diff_function(user_word, valid_word, limit)
+    min_word = min(valid_words, key = lambda validWord: diff_function(user_word, validWord, limit))
+    if diff_function(user_word, min_word, limit) <= limit:
+        return min_word
+    else:
+        return user_word
+    #Return the minimum value
     # END PROBLEM 5
 
 
@@ -111,7 +135,12 @@ def shifty_shifts(start, goal, limit):
     their lengths.
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    if len(start) == 0 or len(goal) == 0:
+        return max(len(start), len(goal))
+    if start[0] == goal[0]:
+        return shifty_shifts(start[1:], goal[1:], limit)
+    else:
+        return 1 + shifty_shifts(start[1:], goal[1:], limit)
     # END PROBLEM 6
 
 
