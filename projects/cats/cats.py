@@ -133,38 +133,46 @@ def shifty_shifts(start, goal, limit):
     """A diff function for autocorrect that determines how many letters
     in START need to be substituted to create GOAL, then adds the difference in
     their lengths.
+
+    Arguments:
+        start: a starting word
+        goal: a string representing a desired goal word
+        limit: a number representing an upper bound on the number of chars that must change
     """
     # BEGIN PROBLEM 6
+    #base case: when we know the result
+    #   check if start OR goal == "" ==> return abs(len(start) - len(goal))
     if len(start) == 0 or len(goal) == 0:
-        return max(len(start), len(goal))
+        return abs(len(start) - len(goal))
+    #   check if limit is exceeded --> checking if limit is negative return a very large number
+    if limit < 0:
+        return 1
     if start[0] == goal[0]:
         return shifty_shifts(start[1:], goal[1:], limit)
     else:
-        return 1 + shifty_shifts(start[1:], goal[1:], limit)
+        return 1 + shifty_shifts(start[1:], goal[1:], limit - 1)
     # END PROBLEM 6
 
 
 def pawssible_patches(start, goal, limit):
-    """A diff function that computes the edit distance from START to GOAL."""
-    assert False, 'Remove this line'
+    """A diff function that computes the edit distance from START to GOAL.
+    """
+    #base case: when we know the result
+    #   check if start OR goal == "" ==> return abs(len(start) - len(goal))
+    if start == "" or goal == "":
+        return abs(len(start) - len(goal))
 
-    if ______________: # Fill in the condition
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
-    elif ___________: # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
+    #   check if limit is exceeded --> checking if limit is negative return a very large number
+    elif limit < 0:
+        return 1
+    elif start[0] == goal[0]:
+        return pawssible_patches(start[1:], goal[1:], limit)
     else:
-        add_diff = ... # Fill in these lines
-        remove_diff = ...
-        substitute_diff = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+        add_diff = 1 + pawssible_patches(start, goal[1:], limit - 1)
+        remove_diff = 1 + pawssible_patches(start[1:], goal, limit - 1)
+        substitute_diff = 1 + pawssible_patches(start[1:], goal[1:], limit - 1)
+
+        return min(add_diff, remove_diff, substitute_diff)
 
 
 def final_diff(start, goal, limit):
@@ -178,10 +186,30 @@ def final_diff(start, goal, limit):
 
 
 def report_progress(typed, prompt, user_id, send):
-    """Send a report of your id and progress so far to the multiplayer server."""
-    # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 8
+    """Send a report of your id and progress so far to the multiplayer server.
+    Return the progress so far
+    
+    Arguments:
+        typed: a list of the words input so far
+        prompt: a list of the words in the typing prompt
+        user_id: a number representing the id of the current user
+        send: a function user to send progress to the multiplayer server
+
+    """
+    #calculate progress
+    count = 0
+    for i in range(len(typed)):
+        if typed[i] == prompt[i]:
+            count += 1
+        else:
+            break
+    progressRatio = count / len(prompt)
+    report = {
+        'id': user_id,
+        'progress': progressRatio
+    }
+    send(report)
+    return progressRatio
 
 
 def fastest_words_report(times_per_player, words):
