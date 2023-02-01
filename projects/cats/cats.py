@@ -234,8 +234,11 @@ def time_per_word(times_per_player, words):
         words: a list of words, in the order they are typed.
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 9
+    times = []
+    for i in range(len(times_per_player)):
+        times = times + [[times_per_player[i][j + 1] - times_per_player[i][j] for j in range(len(words))]]
+    #print("DEBUG: ","times is ", times)
+    return game(words, times)
 
 
 def fastest_words(game):
@@ -249,8 +252,22 @@ def fastest_words(game):
     player_indices = range(len(all_times(game)))  # contains an *index* for each player
     word_indices = range(len(all_words(game)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 10
+    fastestWords = [[] for _ in player_indices]
+
+    # create a list of lists, one for each player, representing the words each player typed fast
+    # [[], []]
+    # loop through every single word
+    for i in word_indices:
+        lowestPlayerIndex = 0
+        minTime = float("inf")
+        # for the player that typed that word the fastest, append it to their respective list
+        # remember to use 'word_at' and 'word_index'
+        for j in player_indices:
+            if time(game, j, i) < minTime:
+                lowestPlayerIndex = j
+                minTime = time(game, j, i)
+        fastestWords[lowestPlayerIndex] += [word_at(game, i)]
+    return fastestWords
 
 
 def game(words, times):
