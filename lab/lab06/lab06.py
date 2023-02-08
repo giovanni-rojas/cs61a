@@ -95,7 +95,8 @@ def insert_items(lst, entry, elem):
     >>> large_lst3 is large_lst
     True
     """
-    for i in range(len(lst)):
+    i = 0
+    while i < len(lst):
         if lst[i] == entry:
             lst.insert(i + 1, elem)
             i += 2
