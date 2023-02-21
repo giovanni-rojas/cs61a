@@ -98,7 +98,16 @@ def repeated(t, k):
     2
     """
     assert k > 1
-    "*** YOUR CODE HERE ***"
+    count, firstVal = 1, next(t)
+    for x in t:
+        if x == firstVal:
+            count += 1
+            if count == k:
+                return firstVal
+        else:
+            firstVal = x
+            count = 1
+
 
 
 def permutations(seq):
@@ -123,8 +132,14 @@ def permutations(seq):
     >>> sorted(permutations("ab"))
     [['a', 'b'], ['b', 'a']]
     """
-    "*** YOUR CODE HERE ***"
-
+    if len(seq) == 1:
+        yield seq
+    else:
+        for x in permutations(seq[1:]):
+            for i in range(len(x) + 1):
+                newList = list(x[:])
+                newList.insert(i, seq[0])
+                yield newList
 
 def make_joint(withdraw, old_pass, new_pass):
     """Return a password-protected withdraw function that has joint access to
@@ -164,7 +179,16 @@ def make_joint(withdraw, old_pass, new_pass):
     >>> make_joint(w, 'hax0r', 'hello')
     "Frozen account. Attempts: ['my', 'secret', 'password']"
     """
-    "*** YOUR CODE HERE ***"
+    attempt = withdraw(0, old_pass)
+    if type(attempt) == str:
+        return attempt
+    def jointWithdraw(amount, passAttempt):
+        if passAttempt == new_pass:
+            passAttempt = old_pass
+        return withdraw(amount, passAttempt)
+
+    return jointWithdraw
+
 
 
 def remainders_generator(m):
@@ -198,7 +222,13 @@ def remainders_generator(m):
     7
     11
     """
-    "*** YOUR CODE HERE ***"
+    def remainder(n):
+        for i in naturals():
+            if i % m == n:
+                yield i
+    
+    for i in range(m):
+        yield remainder(i)
 
 
 def naturals():
