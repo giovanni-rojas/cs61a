@@ -100,9 +100,11 @@ class Mint:
 
     def create(self, kind):
         "*** YOUR CODE HERE ***"
+        return kind(self.year)
 
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = self.current_year
 
 class Coin:
     def __init__(self, year):
@@ -110,6 +112,10 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        age, ageOverFifty = Mint.current_year - self.year, 0
+        if age > 50:
+            ageOverFifty = age - 50
+        return self.cents + ageOverFifty
 
 class Nickel(Coin):
     cents = 5
@@ -134,6 +140,18 @@ def store_digits(n):
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     """
     "*** YOUR CODE HERE ***"
+    link = Link.empty
+    while n > 0:
+        link = Link(n % 10, link)
+        n = n // 10
+    return link
+    
+
+    """
+    if n == 0:
+        return Link.empty
+    return Link(n % 10, store_digits(n // 10))
+    """
 
 
 def is_bst(t):
@@ -161,8 +179,36 @@ def is_bst(t):
     >>> is_bst(t7)
     False
     """
-    "*** YOUR CODE HERE ***"
+    #1. At most 2 branches
+    #2. all[is_bst(b) for b in t.branches] == True
+    #3. bst_max(left) <= t.label
+    #4. bst_min(right) >= t.label
 
+    def bst_max(t):
+        """Return the max label in a BST"""
+        if t.is_leaf():
+            return t.label
+        else:
+            return max([t.label] + list(map(bst_max, t.branches)))
+
+    def bst_min(t):
+        """Return the min label in a BST"""
+        if t.is_leaf():
+            return t.label
+        else:
+            return min([t.label] + list(map(bst_min,t.branches)))
+        
+    if t.is_leaf():
+        return True
+    elif len(t.branches) == 1:
+        if is_bst(t.branches[0]):
+            return True
+    elif len(t.branches) == 2:
+        left, right = t.branches[0], t.branches[1]
+        if t.label >= bst_max(left) and t.label < bst_min(right):
+            if is_bst(left) and is_bst(right):
+                return True
+    return False    
 
 def preorder(t):
     """Return a list of the entries in this tree in the order that they
@@ -175,6 +221,15 @@ def preorder(t):
     [2, 4, 6]
     """
     "*** YOUR CODE HERE ***"
+    if t.is_leaf():
+        return [t.label]
+    else:
+        smallList = []
+        for b in t.branches:
+            smallList = smallList + preorder(b)
+        return [t.label] + smallList
+        
+
 
 
 def path_yielder(t, value):
@@ -213,11 +268,12 @@ def path_yielder(t, value):
     """
 
     "*** YOUR CODE HERE ***"
-
-    for _______________ in _________________:
-        for _______________ in _________________:
-
+    if t.label == value:
+        yield [value]
+    for b in t.branches:
+        for path in path_yielder(b, value):
             "*** YOUR CODE HERE ***"
+            yield [t.label] + path
 
 
 class Link:
