@@ -7,7 +7,7 @@ def insert_into_all(item, nested_list):
     >>> insert_into_all(0, nl)
     [[0], [0, 1, 2], [0, 3]]
     """
-    return ______________________________
+    return [[item] + l for l in nested_list]
 
 def subseqs(s):
     """Assuming that S is a list, return a nested list of all subsequences
@@ -19,11 +19,24 @@ def subseqs(s):
     >>> subseqs([])
     [[]]
     """
-    if ________________:
-        ________________
+    if s == []:
+        return [[]]
     else:
-        ________________
-        ________________
+        subset = subseqs(s[1:])
+        return subset + insert_into_all(s[0], subset)
+
+    #return exclude + include
+
+    #recursive call (ex. 1, 2, 3)
+        #include first element
+            #[1, 2], [1, 3], [1], [1, 2, 3]
+            #call insert_into_all onto first element, case where we exclude
+        #exclude first element (2, 3)
+            #call subseqs on s without s[0]
+            #[2], [3], [], [2,3]
+        
+        #Base Case:
+
 
 
 def inc_subseqs(s):
