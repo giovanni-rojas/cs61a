@@ -54,7 +54,7 @@ def inc_subseqs(s):
     [[], [1], [1], [1, 1], [1, 1, 2], [1, 2], [1, 2], [2]]
     """
     def subseq_helper(s, prev):
-        if not s:
+        if s == []:
             return [[]]
         elif s[0] < prev:
             return subseq_helper(s[1:], prev)
@@ -85,9 +85,9 @@ def num_trees(n):
     429
 
     """
-    if ____________________:
-        return _______________
-    return _______________
+    if n == 1:
+        return 1
+    return sum([num_trees(k) * num_trees(n - k) for k in range(1, n)])
 
 
 def make_generators_generator(g):
@@ -125,16 +125,15 @@ def make_generators_generator(g):
     9
     """
     def gen(i):
-        for ___________ in ___________:
-            if _________________________:
-                _________________________
-            _______________________
-            _______________________
-    __________________________
-    for _________ in __________________:
-        ______________________________
-        ______________________________
-
+        for temp in g():
+            if i < 0:
+                return
+            yield temp
+            i -= 1
+    i = 1
+    for _ in g():
+        yield gen(i)
+        i += 1
 
 class Button:
     """
@@ -172,26 +171,25 @@ class Keyboard:
     """
 
     def __init__(self, *args):
-        ________________
-        for _________ in ________________:
-            ________________
+        self.buttons = {}
+        for p in args:
+            self.buttons[p.pos] = p
 
     def press(self, info):
         """Takes in a position of the button pressed, and
         returns that button's output"""
-        if ____________________:
-            ________________
-            ________________
-            ________________
-        ________________
+        if info in self.buttons.keys():
+            self.buttons[info].times_pressed += 1
+            return self.buttons[info].key
+        return ''
 
     def typing(self, typing_input):
         """Takes in a list of positions of buttons pressed, and
         returns the total output"""
-        ________________
-        for ________ in ____________________:
-            ________________
-        ________________
+        strng = ''
+        for p in typing_input:
+            strng = strng + self.press(p)
+        return strng
 
 
 def make_advanced_counter_maker():
@@ -223,15 +221,25 @@ def make_advanced_counter_maker():
     >>> tom_counter('global-count')
     1
     """
-    ________________
-    def ____________(__________):
-        ________________
-        def ____________(__________):
-            ________________
+    globalCount = 0
+    def counter():
+        count = 0
+        def make_counter(flag):
+            nonlocal globalCount, count
             "*** YOUR CODE HERE ***"
             # as many lines as you want
-        ________________
-    ________________
+            if flag == 'count':
+                count += 1
+                return count
+            elif flag == 'reset':
+                count = 0
+            elif flag == 'global-count':
+                globalCount += 1
+                return globalCount
+            elif flag == 'global-reset':
+                globalCount = 0
+        return make_counter
+    return counter
 
 
 def trade(first, second):
@@ -263,9 +271,9 @@ def trade(first, second):
     """
     m, n = 1, 1
 
-    equal_prefix = lambda: ______________________
-    while _______________________________:
-        if __________________:
+    equal_prefix = lambda: sum(first[:m]) == sum(second[:n])
+    while m < len(first) and n < len(second) and not equal_prefix():
+        if sum(first[:m]) < sum(second[:n]):
             m += 1
         else:
             n += 1
@@ -302,11 +310,11 @@ def shuffle(cards):
     ['A♡', 'A♢', 'A♤', 'A♧', '2♡', '2♢', '2♤', '2♧', '3♡', '3♢', '3♤', '3♧']
     """
     assert len(cards) % 2 == 0, 'len(cards) must be even'
-    half = _______________
+    half = len(cards) // 2
     shuffled = []
-    for i in _____________:
-        _________________
-        _________________
+    for i in range(half):
+        shuffled.append(cards[i])
+        shuffled.append(cards[half + i])
     return shuffled
 
 
