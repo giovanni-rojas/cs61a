@@ -51,6 +51,7 @@ class Insect:
 
     damage = 0
     # ADD CLASS ATTRIBUTES HERE
+    is_watersafe = False
 
     def __init__(self, armor, place=None):
         """Create an Insect with an ARMOR amount and a starting PLACE."""
@@ -104,6 +105,7 @@ class Ant(Insect):
     implemented = False  # Only implemented Ant classes should be instantiated
     food_cost = 0
     # ADD CLASS ATTRIBUTES HERE
+    damageDoubled = False
 
     def __init__(self, armor=1):
         """Create an Ant with an ARMOR quantity."""
@@ -262,28 +264,45 @@ class HungryAnt(Ant):
     food_cost = 4
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 6
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    time_to_digest = 3
     # END Problem 6
 
     def __init__(self, armor=1):
         # BEGIN Problem 6
-        "*** YOUR CODE HERE ***"
+        Ant.__init__(self, armor)
+        self.digesting = 0
         # END Problem 6
 
     def eat_bee(self, bee):
         # BEGIN Problem 6
-        "*** YOUR CODE HERE ***"
+        if bee:
+            bee.reduce_armor(bee.armor)  
+            self.digesting = HungryAnt.time_to_digest
         # END Problem 6
 
     def action(self, gamestate):
         # BEGIN Problem 6
-        "*** YOUR CODE HERE ***"
+        currentPlace = self.place
+        if self.digesting > 0:
+            self.digesting = self.digesting - 1
+        else:
+            self.eat_bee(rANTdom_else_none(currentPlace.bees))
         # END Problem 6
 
 
 
 # BEGIN Problem 7
-# The WallAnt class
+class WallAnt(Ant):
+    """WallAnt has a large armor value of 4."""
+    name = 'Wall'
+    implemented = True
+    food_cost = 4
+
+    def __init__(self, armor=4):
+        """Create a WallAnt with an ARMOR quantity."""
+        Ant.__init__(self, armor)
+
 # END Problem 7
 
 
@@ -294,15 +313,26 @@ class Water(Place):
         """Add an Insect to this place. If the insect is not watersafe, reduce
         its armor to 0."""
         # BEGIN Problem 8
-        "*** YOUR CODE HERE ***"
+        Place.add_insect(self, insect)
+        if not insect.is_watersafe:
+            insect.reduce_armor(insect.armor)
         # END Problem 8
 
 # BEGIN Problem 9
-# The ScubaThrower class
+class ScubaThrower(ThrowerAnt):
+    """WallAnt has a large armor value of 4."""
+    name = 'Scuba'
+    implemented = True
+    food_cost = 6
+    is_watersafe = True
+    def __init__(self, armor=1):
+        """Create a WallAnt with an ARMOR quantity."""
+        Ant.__init__(self, armor)
+
 # END Problem 9
 
 # BEGIN Problem EC
-class QueenAnt(Ant):  # You should change this line
+class QueenAnt(ScubaThrower):
 # END Problem EC
     """The Queen of the colony. The game is over if a bee enters her place."""
 
@@ -310,12 +340,17 @@ class QueenAnt(Ant):  # You should change this line
     food_cost = 7
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    numQueens = 0
+    implemented = True   # Change to True to view in the GUI
     # END Problem EC
 
     def __init__(self, armor=1):
         # BEGIN Problem EC
-        "*** YOUR CODE HERE ***"
+        ScubaThrower.__init__(self, armor)
+        self.realQueen = False
+        if QueenAnt.numQueens == 0:
+            self.realQueen = True
+        QueenAnt.numQueens = QueenAnt.numQueens + 1
         # END Problem EC
 
     def action(self, gamestate):
@@ -325,7 +360,16 @@ class QueenAnt(Ant):  # You should change this line
         Impostor queens do only one thing: reduce their own armor to 0.
         """
         # BEGIN Problem EC
-        "*** YOUR CODE HERE ***"
+        if self.realQueen:
+            self.throw_at(self.nearest_bee(gamestate.beehive))
+            tempPlace = self.place.exit
+            while tempPlace is not None:
+                if tempPlace.ant and not tempPlace.ant.damageDoubled:
+                    tempPlace.ant.damage = tempPlace.ant.damage * 2
+                    tempPlace.ant.damageDoubled = True
+                tempPlace = tempPlace.exit
+        else:
+            self.reduce_armor(self.armor)
         # END Problem EC
 
     def reduce_armor(self, amount):
@@ -333,9 +377,16 @@ class QueenAnt(Ant):  # You should change this line
         remaining, signal the end of the game.
         """
         # BEGIN Problem EC
-        "*** YOUR CODE HERE ***"
+        if self.realQueen:
+            Insect.reduce_armor(self, amount)
+            if self.armor <= 0:
+                bees_win()
+        Insect.reduce_armor(self, amount)
         # END Problem EC
 
+    def remove_from(self, place):
+        if not self.realQueen:
+            return super().remove_from(place)
 
 
 class AntRemover(Ant):
@@ -353,7 +404,7 @@ class Bee(Insect):
     name = 'Bee'
     damage = 1
     # OVERRIDE CLASS ATTRIBUTES HERE
-
+    is_watersafe = True
 
     def sting(self, ant):
         """Attack an ANT, reducing its armor by 1."""
