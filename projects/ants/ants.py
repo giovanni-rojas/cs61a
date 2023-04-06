@@ -413,6 +413,11 @@ class Bee(Insect):
     # OVERRIDE CLASS ATTRIBUTES HERE
     is_watersafe = True
 
+    def __init__(self, armor):
+        Insect.__init__(self, armor)
+        self.scaredOnce = False
+        self.reverseDirection = False
+
     def sting(self, ant):
         """Attack an ANT, reducing its armor by 1."""
         ant.reduce_armor(self.damage)
@@ -438,7 +443,8 @@ class Bee(Insect):
         destination = self.place.exit
         # Extra credit: Special handling for bee direction
         # BEGIN EC
-        "*** YOUR CODE HERE ***"
+        if self.reverseDirection and self.place.entrance != gamestate.beehive:
+            destination = self.place.entrance
         # END EC
         if self.blocked():
             self.sting(self.place.ant)
@@ -557,7 +563,10 @@ def make_slow(action, bee):
     action -- An action method of some Bee
     """
     # BEGIN Problem Optional 4
-    "*** YOUR CODE HERE ***"
+    def slowAction(gamestate):
+        if gamestate.time % 2 == 0:
+            action(gamestate)
+    return slowAction
     # END Problem Optional 4
 
 def make_scare(action, bee):
@@ -566,13 +575,28 @@ def make_scare(action, bee):
     action -- An action method of some Bee
     """
     # BEGIN Problem Optional 4
-    "*** YOUR CODE HERE ***"
+    def scareAction(gamestate):
+        bee.reverseDirection = True
+        action(gamestate)
+    return scareAction
     # END Problem Optional 4
 
 def apply_status(status, bee, length):
     """Apply a status to a BEE that lasts for LENGTH turns."""
     # BEGIN Problem Optional 4
-    "*** YOUR CODE HERE ***"
+    tempAction = bee.action
+    newAction = status(bee.action, bee)
+
+    def action(gamestate):
+        nonlocal length
+        if length > 0:
+            newAction(gamestate)
+            length = length - 1
+        else:
+            if status == make_scare:
+                bee.reverseDirection = False
+            tempAction(gamestate)
+    bee.action = action
     # END Problem Optional 4
 
 
@@ -582,7 +606,7 @@ class SlowThrower(ThrowerAnt):
     name = 'Slow'
     food_cost = 4
     # BEGIN Problem Optional 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem Optional 4
 
     def throw_at(self, target):
@@ -596,12 +620,14 @@ class ScaryThrower(ThrowerAnt):
     name = 'Scary'
     food_cost = 6
     # BEGIN Problem Optional 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem Optional 4
 
     def throw_at(self, target):
         # BEGIN Problem Optional 4
-        "*** YOUR CODE HERE ***"
+        if target and not target.scaredOnce:
+            apply_status(make_scare, target, 2)
+            target.scaredOnce = True
         # END Problem Optional 4
 
 class LaserAnt(ThrowerAnt):
@@ -611,7 +637,7 @@ class LaserAnt(ThrowerAnt):
     food_cost = 10
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem Optional 5
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem Optional 5
 
     def __init__(self, armor=1):
@@ -620,12 +646,23 @@ class LaserAnt(ThrowerAnt):
 
     def insects_in_front(self, beehive):
         # BEGIN Problem Optional 5
-        return {}
+        allInsects = {}
+        currentPlace = self.place
+        distance = 0
+        while currentPlace is not beehive:
+            if currentPlace.ant and currentPlace.ant is not self:
+                allInsects[currentPlace.ant] = distance
+            for i in currentPlace.bees[:]:
+                allInsects[i] = distance
+            distance = distance + 1
+            currentPlace = currentPlace.entrance
+        return allInsects
         # END Problem Optional 5
 
     def calculate_damage(self, distance):
         # BEGIN Problem Optional 5
-        return 0
+        damage = 2 - 0.2 * distance - 0.05 * self.insects_shot
+        return max(0, damage)
         # END Problem Optional 5
 
     def action(self, gamestate):
