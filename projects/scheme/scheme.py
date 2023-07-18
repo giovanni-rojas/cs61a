@@ -72,7 +72,12 @@ def eval_all(expressions, env):
     2
     """
     # BEGIN PROBLEM 7
-    return scheme_eval(expressions.first, env) # replace this with lines of your own code
+    if expressions is nil:
+        return None
+    while expressions is not nil:
+        evaluated = scheme_eval(expressions.first, env)
+        expressions = expressions.rest
+    return evaluated
     # END PROBLEM 7
 
 ################
@@ -125,7 +130,11 @@ class Frame(object):
         if len(formals) != len(vals):
             raise SchemeError('Incorrect number of arguments to function call')
         # BEGIN PROBLEM 10
-        "*** YOUR CODE HERE ***"
+        childFrame = Frame(self)
+        while formals is not nil:
+            childFrame.define(formals.first, vals.first)
+            formals, vals = formals.rest, vals.rest
+        return childFrame
         # END PROBLEM 10
 
 ##############
@@ -256,7 +265,10 @@ def do_define_form(expressions, env):
         # END PROBLEM 5
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 9
-        "*** YOUR CODE HERE ***"
+        name = target.first
+        lambdaFunc = do_lambda_form(Pair(target.rest, expressions.rest), env)
+        env.define(name, lambdaFunc)
+        return name
         # END PROBLEM 9
     else:
         bad_target = target.first if isinstance(target, Pair) else target
@@ -297,8 +309,10 @@ def do_lambda_form(expressions, env):
     formals = expressions.first
     validate_formals(formals)
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    return LambdaProcedure(expressions.first, expressions.rest, env)
     # END PROBLEM 8
+
+
 
 def do_if_form(expressions, env):
     """Evaluate an if form.

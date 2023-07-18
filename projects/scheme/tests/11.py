@@ -83,8 +83,7 @@ test = {
           ....   (define (inner z x)
           ....     (+ x (* y 2) (* z 3)))
           ....   (inner x 10))
-          71fe94b728b1cb1923a1c51c2533bcd8
-          # locked
+          outer
           scm> (outer 1 2)
           5d3ec98dabcf5b4a06694ccc93722cfb
           # locked
