@@ -7,19 +7,20 @@ test = {
         {
           'code': r"""
           sqlite> SELECT * FROM matchmaker LIMIT 10;
-          dog|Smells like Teen Spirit|blue|yellow
-          dog|Smells like Teen Spirit|blue|blue
-          dog|Smells like Teen Spirit|blue|yellow
-          dog|Smells like Teen Spirit|blue|blue
-          dog|Smells like Teen Spirit|blue|black
-          dog|All I want for Christmas is you|maroon|purple
-          dog|All I want for Christmas is you|maroon|pink
-          dog|All I want for Christmas is you|maroon|pink
-          dog|All I want for Christmas is you|maroon|green
-          dog|All I want for Christmas is you|maroon|red
+          dog|Clair De Lune|blue|green
+          dog|Clair De Lune|blue|purple
+          dog|Clair De Lune|blue|blue
+          dog|Clair De Lune|blue|space gray
+          dog|Clair De Lune|blue|green
+          dog|Clair De Lune|blue|black
+          dog|Clair De Lune|blue|green
+          dog|Clair De Lune|blue|blue
+          dog|Clair De Lune|blue|blue
+          dog|Clair De Lune|blue|blue
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         }
       ],
       'ordered': False,

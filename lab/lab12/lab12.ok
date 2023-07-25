@@ -7,12 +7,7 @@
     "tests": {
         "tests/*.py": "ok_test"
     },
-    "default_tests": [
-        "bluedog",
-        "matchmaker",
-        "sevens",
-        "smallest-int"
-    ],
+    "default_tests": [],
     "protocols": [
         "restore",
         "file_contents",

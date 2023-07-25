@@ -1,22 +1,13 @@
 test = {
-  'name': 'sevens',
+  'name': 'avg-difference',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          sqlite> SELECT * FROM sevens;
-          seven
-          7
-          7
-          7
-          7
-          the number 7 below.
-          the number 7 below.
-          7
-          the number 7 below.
-          7
+          sqlite> SELECT * FROM avg_difference;
+          543.0
           """,
           'hidden': False,
           'locked': False,
