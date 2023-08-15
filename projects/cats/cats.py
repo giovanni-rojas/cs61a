@@ -266,7 +266,7 @@ def fastest_words(game):
             if time(game, j, i) < minTime:
                 lowestPlayerIndex = j
                 minTime = time(game, j, i)
-        fastestWords[lowestPlayerIndex] += [word_at(game, i)]
+        fastestWords[lowestPlayerIndex] += [word_at(game, i)] 
     return fastestWords
 
 

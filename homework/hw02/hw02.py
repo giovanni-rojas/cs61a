@@ -108,6 +108,7 @@ def missing_digits(n):
         return missing_digits(n // 10)
     else:
         return (n % 10 - (n % 100) // 10) - 1 + missing_digits(n // 10)
+    
 
 
 def next_largest_coin(coin):

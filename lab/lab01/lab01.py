@@ -36,12 +36,18 @@ def sum_digits(y):
     6
     """
     "*** YOUR CODE HERE ***"
-    result = 0
-    while y // 10 > 0:
-        result = result + (y % 10)
-        y = y // 10
-    result = result + y
-    return result
+    #result = 0
+    #while y // 10 > 0:
+    #    result = result + (y % 10)
+    #    y = y // 10
+    #result = result + y
+    #return result
+
+    if y == 0:
+        return 0
+    else:
+        return (y % 10) + sum_digits(y // 10)
+
 
 
 

@@ -28,8 +28,7 @@ def scale(it, multiplier):
     [2, 4, 6, 8, 10]
     """
     "*** YOUR CODE HERE ***"
-    for x in it:
-        yield x * multiplier
+    yield from [x * multiplier for x in it]
 
 
 def hailstone(n):
